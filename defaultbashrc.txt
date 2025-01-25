@@ -1,0 +1,71 @@
+# ~/.bashrc: executed by bash for non-login shells.
+# For more information: /usr/share/doc/bash/examples/startup-files
+
+# If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
+# History settings
+HISTCONTROL=ignoreboth       # Avoid duplicates
+shopt -s histappend          # Append to history instead of overwriting
+shopt -s checkwinsize        # Update terminal size after each command
+
+# Set default colors for prompt (customizable)
+# Modify these variables to change your prompt colors
+RED='\\[\\e[0;31m\\]'
+GREEN='\\[\\e[0;32m\\]'
+YELLOW='\\[\\e[0;33m\\]'
+BLUE='\\[\\e[0;34m\\]'
+CYAN='\\[\\e[0;36m\\]'
+PURPLE='\\[\\e[0;35m\\]'
+NC='\\[\\e[0m\\]'  # No color
+
+# Customize the prompt symbol
+# Modify the variable below to change the prompt symbol (e.g., '$' for normal users, '#' for root)
+PROMPT_SYMBOL='$'  # Default is $
+
+# Set a fancy prompt (using the color variables and prompt symbol)
+PS1='${debian_chroot:+($debian_chroot)}\\u@\\h:\\w\\[$NC\\]\\n\\[$BLUE\\]\\w\\[$NC\\]\\[$RED\\]$PROMPT_SYMBOL\\[$NC\\] '
+
+# Aliases for ls
+alias ll='ls -lh'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Enable color support for ls (if available)
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+fi
+
+# Load additional aliases from .bash_aliases if available
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# Set default parameter to send to "less"
+LESS="-R -i"
+
+# Enable programmable completion (if available)
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    . /etc/bash_completion
+fi
+
+# Add sbin directories to PATH
+echo $PATH | grep -Eq "(^|:)/sbin(:|)" || PATH=$PATH:/sbin
+echo $PATH | grep -Eq "(^|:)/usr/sbin(:|)" || PATH=$PATH:/usr/sbin
+
+# Set the terminal title for xterm or rxvt
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\\[\\e]0;${debian_chroot:+($debian_chroot)}\\u@\\h: \\w\\a\\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# Add local pipx binary to PATH (username dynamically set)
+export PATH="$PATH:/home/$USER/.local/bin"
+
+# ------------------------------
+# Created by Warvdoh Mróz in 2025.
+# ------------------------------

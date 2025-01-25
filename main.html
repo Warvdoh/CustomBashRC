@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Bashrc Editor</title>
+    <style>
+        /* Global styling */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            background-color: #000000; /* Black background */
+            color: white;
+        }
+
+        header {
+            background-color: #FF4500; /* Red Accent Color */
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        header h1 {
+            display: inline-block;
+        }
+
+        header .version-label {
+            font-size: 14px;
+            color: #FF4500;
+            margin-left: 10px;
+            background-color: black;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+        }
+
+        .editor-section {
+            width: 30%;
+            padding: 20px;
+            background-color: #333; /* Dark background for the editor */
+            border: 1px solid #444; /* Dark border */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .editor-section textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            border: 1px solid #444;
+            margin-bottom: 10px;
+            resize: vertical;
+            background-color: #222; /* Dark background for text area */
+            color: white; /* Light text */
+        }
+
+        .button {
+            background-color: #FF4500; /* Red Accent Color */
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #e44100; /* Darker Red for hover effect */
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .input-container label {
+            flex: 1;
+        }
+
+        .input-container input[type="color"],
+        .input-container input[type="text"],
+        .input-container select {
+            margin-left: 10px;
+            padding: 5px;
+        }
+
+        input[type="text"] {
+            width: 80px;
+            font-size: 14px;
+        }
+
+        .preview-box {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: black;
+            color: white;
+            font-family: Consolas, monospace;
+            font-size: 16px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-box span {
+            display: inline-block;
+        }
+
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        footer a {
+            color: #FF4500;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Custom Bashrc Editor</h1>
+        <span class="version-label">v-0.1 alpha</span>
+    </header>
+
+    <div class="container">
+        <!-- Left Section: Edit Colors -->
+        <div class="editor-section">
+            <h2>Customize Prompt Colors</h2>
+
+            <div class="input-container">
+                <label for="username-color">Username Color:</label>
+                <input type="color" id="username-color" value="#32CD32">
+                <input type="text" id="username-color-hex" value="#32CD32">
+            </div>
+            <div class="input-container">
+                <label for="hostname-color">Hostname Color:</label>
+                <input type="color" id="hostname-color" value="#FFD700">
+                <input type="text" id="hostname-color-hex" value="#FFD700">
+            </div>
+            <div class="input-container">
+                <label for="path-color">Path Color:</label>
+                <input type="color" id="path-color" value="#1E90FF">
+                <input type="text" id="path-color-hex" value="#1E90FF">
+            </div>
+            <div class="input-container">
+                <label for="symbol-color">Prompt Symbol Color:</label>
+                <input type="color" id="symbol-color" value="#FF4500">
+                <input type="text" id="symbol-color-hex" value="#FF4500">
+            </div>
+            <div class="input-container">
+                <label for="at-symbol-color">At Symbol Color:</label>
+                <input type="color" id="at-symbol-color" value="#FFFFFF">
+                <input type="text" id="at-symbol-color-hex" value="#FFFFFF">
+            </div>
+            <div class="input-container">
+                <label for="prompt-symbol">Prompt Symbol:</label>
+                <select id="prompt-symbol">
+                    <option value="$">$</option>
+                    <option value="#">#</option>
+                    <option value="%">%</option>
+                    <option value="~">~</option>
+                    <option value=">">></option>
+                    <option value="custom">Custom</option>
+                </select>
+                <input type="text" id="custom-symbol" placeholder="Enter custom symbol" style="display:none;">
+            </div>
+
+            <!-- Preview box -->
+            <div class="preview-box">
+                <span id="username-preview">username</span>
+                <span id="at-preview">@</span>
+                <span id="hostname-preview">hostname</span>
+                <span>:</span>
+                <span id="path-preview">/home</span>
+                <span id="symbol-preview">$</span>
+            </div>
+
+            <button class="button" id="reset-colors">Reset to Default</button>
+            <button class="button" id="convert-btn">Convert</button>
+        </div>
+
+        <!-- Center Section: Input Bashrc -->
+        <div class="editor-section">
+            <h2>Edit Your .bashrc</h2>
+            <textarea id="bashrc-input" placeholder="Paste your .bashrc file here..."></textarea>
+            <button class="button" id="load-default">Load Default .bashrc</button>
+        </div>
+
+        <!-- Right Section: Output Bashrc -->
+        <div class="editor-section">
+            <h2>Generated .bashrc</h2>
+            <textarea id="bashrc-output" readonly></textarea>
+            <button class="button" id="download-btn">Download .bashrc</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Warvdoh Mróz 2025</p>
+        <p><a href="https://github.com/Warvdoh?tab=repositories" target="_blank">My GitHub</a></p>
+    </footer>
+
+    <script>
+        const defaultColors = {
+            username: '#32CD32',
+            hostname: '#FFD700',
+            path: '#1E90FF',
+            symbol: '#FF4500',
+            atSymbol: '#FFFFFF'
+        };
+
+        // Function to load the default bashrc content into the middle section
+        document.getElementById('load-default').addEventListener('click', () => {
+            console.log('Attempting to load default .bashrc');
+            fetch('defaultbashrc.txt')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('bashrc-input').value = data;
+                    updateColors(); // Update colors when the default bashrc is loaded
+                })
+                .catch(error => {
+                    console.error('Error loading default .bashrc:', error);
+                });
+        });
+
+        // Function to update the bashrc content dynamically
+        function updateColors() {
+            const usernameColor = document.getElementById('username-color').value;
+            const hostnameColor = document.getElementById('hostname-color').value;
+            const pathColor = document.getElementById('path-color').value;
+            const symbolColor = document.getElementById('symbol-color').value;
+            const atSymbolColor = document.getElementById('at-symbol-color').value;
+
+            // Update text inputs based on color pickers
+            document.getElementById('username-color-hex').value = usernameColor;
+            document.getElementById('hostname-color-hex').value = hostnameColor;
+            document.getElementById('path-color-hex').value = pathColor;
+            document.getElementById('symbol-color-hex').value = symbolColor;
+            document.getElementById('at-symbol-color-hex').value = atSymbolColor;
+
+            // Update the preview box colors
+            document.getElementById('username-preview').style.color = usernameColor;
+            document.getElementById('hostname-preview').style.color = hostnameColor;
+            document.getElementById('path-preview').style.color = pathColor;
+            document.getElementById('symbol-preview').style.color = symbolColor;
+            document.getElementById('at-preview').style.color = atSymbolColor;
+
+            // Handle custom symbol display
+            const promptSymbol = document.getElementById('prompt-symbol').value;
+            if (promptSymbol === 'custom') {
+                document.getElementById('custom-symbol').style.display = 'inline';
+                document.getElementById('symbol-preview').textContent = document.getElementById('custom-symbol').value || '$';
+            } else {
+                document.getElementById('custom-symbol').style.display = 'none';
+                document.getElementById('symbol-preview').textContent = promptSymbol;
+            }
+        }
+
+        // Function to convert and update bashrc content
+        function convertBashrc() {
+            const inputBashrc = document.getElementById('bashrc-input').value;
+
+            const usernameColor = document.getElementById('username-color').value;
+            const hostnameColor = document.getElementById('hostname-color').value;
+            const pathColor = document.getElementById('path-color').value;
+            const symbolColor = document.getElementById('symbol-color').value;
+            const atSymbolColor = document.getElementById('at-symbol-color').value;
+            const promptSymbol = document.getElementById('prompt-symbol').value === 'custom'
+                ? document.getElementById('custom-symbol').value || '$'
+                : document.getElementById('prompt-symbol').value;
+
+            // Modify the PS1 prompt in the bashrc content with selected colors
+            const updatedBashrc = inputBashrc.replace(/PS1='(.*?)'/, `PS1='\\[\\e[38;5;${usernameColor}\\]\\u\\[\\e[38;5;${atSymbolColor}\\]@\\h:\\[\\e[38;5;${pathColor}\\]\\w\\[\\e[38;5;${symbolColor}\\]${promptSymbol}\\[\\e[0m\\]'`);
+
+            // Set the modified bashrc content to the output section
+            document.getElementById('bashrc-output').value = updatedBashrc;
+        }
+
+        // Event listeners for color inputs and reset button
+        document.querySelectorAll('input[type="color"], input[type="text"], select').forEach(input => {
+            input.addEventListener('input', updateColors);
+        });
+
+        // Event listener for reset button
+        document.getElementById('reset-colors').addEventListener('click', () => {
+            document.getElementById('username-color').value = defaultColors.username;
+            document.getElementById('hostname-color').value = defaultColors.hostname;
+            document.getElementById('path-color').value = defaultColors.path;
+            document.getElementById('symbol-color').value = defaultColors.symbol;
+            document.getElementById('at-symbol-color').value = defaultColors.atSymbol;
+            document.getElementById('prompt-symbol').value = '$';
+            document.getElementById('custom-symbol').style.display = 'none';
+            updateColors();
+        });
+
+        // Event listener for convert button
+        document.getElementById('convert-btn').addEventListener('click', convertBashrc);
+
+        // Download the generated bashrc content
+        document.getElementById('download-btn').addEventListener('click', () => {
+            const content = document.getElementById('bashrc-output').value;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '.bashrc';
+            link.click();
+        });
+
+        // Initialize with default colors
+        updateColors();
+    </script>
+</body>
+</html>
