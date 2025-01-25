@@ -37,6 +37,62 @@
             border-radius: 5px;
         }
 
+        header .help-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        header .help-button:hover {
+            background-color: #666;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #222;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #444;
+            width: 50%;
+            color: white;
+            border-radius: 10px;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+        }
+
+        .modal-close {
+            float: right;
+            color: #FF4500;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #e44100;
+        }
+
         .container {
             display: flex;
             justify-content: space-between;
@@ -141,13 +197,72 @@
         footer a:hover {
             text-decoration: underline;
         }
+
+        /* Buy Me a Coffee Button */
+        .bmc-button-container {
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .bmc-button {
+            display: flex;
+            align-items: center;
+            background-color: #a30000;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Cookie', cursive;
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .bmc-button:hover {
+            background-color: #d40000;
+        }
+
+        .bmc-emoji {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        .bmc-text {
+            text-transform: capitalize;
+        }
+
+        .bmc-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #ffffff;
+        }
+
+        .bmc-button:hover {
+            background-color: #FFDD00;
+            color: #a30000;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Custom Bashrc Editor</h1>
         <span class="version-label">v-0.1 alpha</span>
+        <button class="help-button" id="help-btn">?</button>
     </header>
+
+    <div class="modal" id="help-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="close-modal">&times;</span>
+            <h2>How to Use This Tool</h2>
+            <p>1. Paste your existing .bashrc file into the middle editor, or click "Load Default .bashrc" to start with a default template1</p>
+            <p>2. Use the color pickers to customize your bash prompt colors.</p>
+            <p>3. Click "Convert" to generate the customized .bashrc file.</p>
+            <p>4. Review the generated content in the right editor, then click "Download .bashrc" to save it.</p>
+            <p>5. Replace your existing .bashrc file with the downloaded one and restart your terminal.</p>
+            <h2>Notes:</h2>
+            <p> Sometimes your .bashrc file might be hidden. You might need to enable viewing hidden files </p>
+            <p> The tool is designed and tested for debian based linux distributions eg.: Ubuntu, Zorin OS, MX linux. <p>
+        </div>
+    </div>
 
     <div class="container">
         <!-- Left Section: Edit Colors -->
@@ -194,29 +309,28 @@
 
             <!-- Preview box -->
             <div class="preview-box">
-                <span id="username-preview">username</span>
-                <span id="at-preview">@</span>
-                <span id="hostname-preview">hostname</span>
-                <span>:</span>
-                <span id="path-preview">/home</span>
-                <span id="symbol-preview">$</span>
+                <span id="username-preview" style="color: #32CD32;">user</span>
+                <span id="at-preview" style="color: #FFFFFF;">@</span>
+                <span id="hostname-preview" style="color: #FFD700;">host</span>
+                <span id="path-preview" style="color: #1E90FF;">~/path</span>
+                <span id="symbol-preview" style="color: #FF4500;">$</span>
             </div>
 
             <button class="button" id="reset-colors">Reset to Default</button>
-            <button class="button" id="convert-btn">Convert</button>
         </div>
 
-        <!-- Center Section: Input Bashrc -->
+        <!-- Middle Section: Bashrc Input -->
         <div class="editor-section">
-            <h2>Edit Your .bashrc</h2>
-            <textarea id="bashrc-input" placeholder="Paste your .bashrc file here..."></textarea>
+            <h2>Edit .bashrc</h2>
+            <textarea id="bashrc-input" placeholder="Paste your .bashrc content here..."></textarea>
             <button class="button" id="load-default">Load Default .bashrc</button>
         </div>
 
-        <!-- Right Section: Output Bashrc -->
+        <!-- Right Section: Bashrc Output -->
         <div class="editor-section">
             <h2>Generated .bashrc</h2>
-            <textarea id="bashrc-output" readonly></textarea>
+            <textarea id="bashrc-output" placeholder="Generated .bashrc will appear here..." readonly></textarea>
+            <button class="button" id="convert-btn">Convert</button>
             <button class="button" id="download-btn">Download .bashrc</button>
         </div>
     </div>
@@ -224,9 +338,15 @@
     <footer>
         <p>Warvdoh Mróz 2025</p>
         <p><a href="https://github.com/Warvdoh?tab=repositories" target="_blank">My GitHub</a></p>
+        <div class="bmc-button-container">
+            <a class="bmc-button" href="https://www.buymeacoffee.com/warvdoh" target="_blank">
+                <span class="bmc-emoji">🦇</span>
+                <span class="bmc-text">Donate Button | Toss a coin!</span>
+            </a>
+        </div>
     </footer>
 
-    <script>
+<script>
         const defaultColors = {
             username: '#32CD32',
             hostname: '#FFD700',
@@ -339,6 +459,24 @@
 
         // Initialize with default colors
         updateColors();
+
+        // Event listener for help modal
+        document.getElementById('help-btn').addEventListener('click', () => {
+            document.getElementById('help-modal').style.display = 'block';
+        });
+
+        // Close modal when "X" is clicked
+        document.getElementById('close-modal').addEventListener('click', () => {
+            document.getElementById('help-modal').style.display = 'none';
+        });
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('help-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
